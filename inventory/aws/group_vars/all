@@ -7,7 +7,7 @@ cloud_config:
   subnet_name: '{{ cluster_name }}-subnet'
   subnet_cidr: '10.0.10.0/24'
   internet_gateway: true                                           # Only set to false if using local repos (node will be without Internet access)
-  admin_username: ec2-user
+  admin_username: ubuntu                                           # Depends on the image, usually can be set to ubuntu, centos or ec2-user
   ssh:
     keyname: "{{ cluster_name }}-key"
     publickey: '~/.ssh/id_rsa.pub'
@@ -24,22 +24,21 @@ cloud_config:
       description: "SSH and inter-nodes access - {{ cluster_name }}"
 
 nodes:
-  - role: "hdp-master"
+  - host_group: "hdp-master"
     count: 1
-    image: ami-7d50491b                                            # Amazon Linux AMI 2017.03.1 in eu-west-1
-    type: r3.xlarge
+    image: ami-2a7d75c0                                            # Ubuntu 16.04 AMI in eu-west-1 only (change this ID if using a different region)
+    type: r4.xlarge
     public_ip: true
     security_groups: default_cluster_access,ambari_access
     root_volume:
       ebs: true                                                    # non-EBS root volumes are not supported at the moment
       type: gp2
       size: 15
-    ambari_server: true
 
-  - role: "hdp-slave"
+  - host_group: "hdp-slave"
     count: 3
-    image: ami-7d50491b                                            # Amazon Linux AMI 2017.03.1 in eu-west-1
-    type: r3.large
+    image: ami-2a7d75c0                                            # Ubuntu 16.04 AMI in eu-west-1 only (change this ID if using a different region)
+    type: m5.xlarge
     public_ip: true
     security_groups: default_cluster_access
     root_volume:
@@ -47,10 +46,10 @@ nodes:
       type: gp2
       size: 15
 
-  - role: "hdp-edge"
+  - host_group: "hdp-edge"
     count: 0
-    image: ami-7d50491b                                            # Amazon Linux AMI 2017.03.1 in eu-west-1
-    type: m3.medium
+    image: ami-2a7d75c0                                            # Ubuntu 16.04 AMI in eu-west-1 only (change this ID if using a different region)
+    type: m4.large
     public_ip: true
     security_groups: default_cluster_access
     root_volume:

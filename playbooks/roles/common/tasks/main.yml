@@ -9,31 +9,17 @@
         - "{{ ansible_os_family|lower }}.yml"
         - defaults.yml
       paths:
-        - ../vars
-
-- name: Install epel
-  yum:
-    name: epel-release
-    state: installed
-  ignore_errors: true
-  register: epel_result
-  when: ansible_os_family|lower == "redhat"
-
-- name: Install epel from rpm
-  yum:
-    name: "{{ epel_url }}"
-    state: installed
-  when: ansible_os_family|lower == "redhat" and epel_result|failed
+        - ../common/vars
 
 - name: Install required packages
   package:
     name: "{{ item }}"
     update_cache: yes
     state: present
-  with_items: "{{ packages|default([]) }}"
+  with_items: "{{ packages | join(',') }}"
 
 - name: Install Java
-  include: java.yml
+  include_tasks: java.yml
   when: java != "embedded"
 
 - name: Make sure the NTP service is started
@@ -49,7 +35,8 @@
 
 - name: Add mappings to /etc/hosts
   lineinfile:
-    dest: /etc/hosts
+    path: /etc/hosts
+    regexp: "^{{ hostvars[item]['ansible_'~hostvars[item].ansible_default_ipv4.alias]['ipv4']['address'] }}.*"
     line: "{{ hostvars[item]['ansible_'~hostvars[item].ansible_default_ipv4.alias]['ipv4']['address'] }} {{ hostvars[item]['ansible_nodename'] }}"
     insertafter: "^127..*$"
     state: present
@@ -65,7 +52,7 @@
 
 - name: Set nofile and nproc limits
   blockinfile:
-    dest: /etc/security/limits.d/99-hadoop.conf
+    path: /etc/security/limits.d/99-hadoop.conf
     create: yes
     mode: 0644
     block: |
@@ -83,17 +70,18 @@
     reload: yes
     ignoreerrors: yes
 
-- name: Stop the {{ firewall_service_name }} firewall service
-  service:
-    name: "{{ firewall_service_name }}"
-    state: stopped
-  when: disable_firewall
+- block:
+    - name: Stop the {{ firewall_service_name }} firewall service
+      service:
+        name: "{{ firewall_service_name }}"
+        state: stopped
+      ignore_errors: true
 
-- name: Disable the {{ firewall_service_name }} firewall service
-  service:
-    name: "{{ firewall_service_name }}"
-    enabled: no
-  ignore_errors: true
+    - name: Disable the {{ firewall_service_name }} firewall service
+      service:
+        name: "{{ firewall_service_name }}"
+        enabled: no
+      ignore_errors: true
   when: disable_firewall
 
 - name: Disable selinux
@@ -108,7 +96,7 @@
 
 - name: Disable Transparent Huge Pages in Grub 2
   lineinfile:
-    dest: /etc/default/grub
+    path: /etc/default/grub
     state: present
     line: 'GRUB_CMDLINE_LINUX=$GRUB_CMDLINE_LINUX" transparent_hugepage=never"'
   when: (ansible_os_family|lower == "redhat" and ansible_distribution_major_version|int == 7) or (ansible_os_family|lower == "debian" and ansible_distribution_major_version|int >= 7) or (ansible_os_family|lower == "suse" and ansible_distribution_major_version|int == 12)
@@ -118,20 +106,21 @@
 - meta: flush_handlers
 
 - name: Configure tuned (RHEL/CentOS 7)
-  include: tuned.yml
+  include_tasks: tuned.yml
   when: ansible_os_family|lower == "redhat" and ansible_distribution_major_version|int == 7
 
 - block:
-    - name: Attempt to fetch the http secret key
+    - name: Attempt to fetch the http secret key (if exists)
       fetch:
         src: /etc/security/http_secret
         dest: /tmp/hadoop_http_secret
         flat: yes
-      delegate_to: "{{ groups['ambari-server']|sort|list|first }}"
+        fail_on_missing: no
+      delegate_to: "{{ groups['ambari-server']|first }}"
       run_once: true
       register: fetch_results
 
-    - name: Create the http secret key
+    - name: Create the http secret key locally (if nothing was previously fetched)
       local_action: shell dd if=/dev/urandom of=/tmp/hadoop_http_secret bs=1024 count=1
       run_once: true
       become: false
@@ -139,15 +128,15 @@
         creates: /tmp/hadoop_http_secret
       when: not fetch_results.changed
 
-    - name: Copy the http secret key to all nodes
+    - name: Copy the local http secret key to all nodes
       copy:
         src: /tmp/hadoop_http_secret
         dest: /etc/security/http_secret
         force: yes
         mode: 0444
 
-    - name: Delete the http secret key
+    - name: Delete the local http secret key
       local_action: file path="/tmp/hadoop_http_secret" state="absent"
       run_once: true
       become: false
-  when: security != "none" and security_options.http_authentication|default(false)
+  when: security != "none" and security_options.http_authentication|default(false) and install_hdp is defined and install_hdp

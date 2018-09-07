@@ -9,20 +9,14 @@
         - "{{ ansible_os_family|lower }}.yml"
         - defaults.yml
       paths:
-        - ../vars
+        - ../mit-kdc/vars
 
 - name: Install MIT KDC packages
   package:
     name: "{{ item }}"
     update_cache: yes
     state: present
-  with_items: "{{ kdc_packages }}"
-
-- name: Create the KDC database for realm {{ security_options.realm | upper }}
-  shell: "{{ kdc_init_command }} -r {{ security_options.realm | upper }} -P {{ security_options.kdc_master_key }}"
-  args:
-    creates: "{{ kdc_database_file }}"
-  notify: Restart krb5
+  with_items: "{{ kdc_packages | join(',') }}"
 
 - name: Upload the KDC configuration file
   template:
@@ -30,6 +24,12 @@
     dest: "{{ kdc_config_file }}"
     mode: 0600
     force: yes
+  notify: Restart krb5
+
+- name: Create the KDC database for realm {{ security_options.realm | upper }}
+  shell: "{{ kdc_init_command }} -r {{ security_options.realm | upper }} -P {{ security_options.kdc_master_key }}"
+  args:
+    creates: "{{ kdc_database_file }}"
   notify: Restart krb5
 
 - meta: flush_handlers
@@ -41,11 +41,12 @@
 - name: Fail if the admin principal could not be created
   fail:
     msg: The admin principal could not be created. Error is {{ addprinc_result.stderr }}
-  when: addprinc_result|failed or not (addprinc_result.stdout|search("Principal .* created") or addprinc_result.stderr|search("Principal or policy already exists while creating"))
+  when: addprinc_result is failed or not (addprinc_result.stdout is search("Principal .* created") or addprinc_result.stderr is search("Principal or policy already exists while creating"))
 
 - name: Set the ACL for the admin user
   lineinfile:
-    dest: "{{ kdc_acl_file }}"
+    path: "{{ kdc_acl_file }}"
+    regexp: "^\\*/admin@{{ security_options.realm | upper }}.*"
     line: "*/admin@{{ security_options.realm | upper }}  *"
     insertbefore: EOF
     state: present
