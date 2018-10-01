@@ -1,0 +1,21 @@
+---
+- name: Unmount hdfs volume
+  hosts: all
+  remote_user: centos
+  become: true
+  become_method: sudo
+  become_user: root
+
+  # fs variables
+  vars:
+    directoryPath:    '/hdfs'
+
+  tasks:
+  - name: unmount directory /hdfs
+    # This will also add to /etc/fstab
+    mount:
+      path: "{{ directoryPath }}"
+      state: unmounted
+
+
+
