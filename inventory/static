@@ -1,14 +1,7 @@
-######################################################
-##
-## The static inventory puts the hosts in different groups as described here: https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#hosts-and-groups
-## Variables would be defined directly for each host, including the ansible_user, the login user with sudoers permissions.
-## For authentication, either the password or the SSH Private Key can be used.
-##
-######################################################
-
+[hdp-edge]
+hdp-edge-01 ansible_host=10.224.0.29 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-master]
-master01 ansible_host=192.168.0.2 ansible_user=root ansible_ssh_private_key_file="~/.ssh/id_rsa"
-
+hdp-master-01 ansible_host=10.224.0.17 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-slave]
-slave01 ansible_host=192.168.0.3 ansible_user=root ansible_ssh_private_key_file="~/.ssh/id_rsa"
-#slave02 ansible_host=192.168.0.4 ansible_user=root ansible_ssh_pass=changeme
+hdp-slave-01 ansible_host=10.224.0.4 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+

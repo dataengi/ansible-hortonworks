@@ -1,0 +1,3 @@
+output "invfile" {
+  value = "${module.hdp-edge.nodetype}${module.hdp-edge.static_inventory}${module.hdp-master.nodetype}${module.hdp-master.static_inventory}${module.hdp-slave.nodetype}${module.hdp-slave.static_inventory}"
+}
