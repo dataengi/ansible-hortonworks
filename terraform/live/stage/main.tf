@@ -18,12 +18,12 @@ module "hdp-master" {
   source                = "../../modules/nodes"
   host_group            = "hdp-master"
   nodescount            = 1
-  flavor                = "t2.medium"
+  flavor                = "t2.medium" #TODO: change
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
-  private_key           = "~/.ssh/big-data-sandbox.pem"
+  private_key           = "~/.ssh/big-data-sandbox.pem" #TODO: get from OpenStack
   enable_persist_volume = true
   persist_volume_size   = 2
 }

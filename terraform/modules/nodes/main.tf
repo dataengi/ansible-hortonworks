@@ -31,6 +31,7 @@ locals {
 resource "openstack_compute_instance_v2" "node" {
   //stop_before_destroy = true
 
+  
   count = "${var.nodescount}"
   name = "${format("${var.host_group}-%02d", count.index+1)}"
   image_name = "${data.openstack_images_image_v2.osimage.name}"
