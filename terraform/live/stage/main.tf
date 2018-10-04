@@ -15,8 +15,10 @@ provider "null" {
 
 
 module "hdp-master" {
-  source                = "../../modules/nodes"
+  source                = "../../modules/nodegroups"
   host_group            = "hdp-master"
+  hostname              = "bds-m"
+  domainsuffix          = "scalhive.com"
   nodescount            = 1
   flavor                = "t2.medium" #TODO: change
   image                 = "CentOS-7.4"
@@ -29,8 +31,10 @@ module "hdp-master" {
 }
 
 module "hdp-slave" {
-  source                = "../../modules/nodes"
+  source                = "../../modules/nodegroups"
   host_group            = "hdp-slave"
+  hostname              = "bds-s"
+  domainsuffix          = "scalhive.com"
   nodescount            = 1
   flavor                = "t2.medium"
   image                 = "CentOS-7.4"
@@ -43,8 +47,10 @@ module "hdp-slave" {
 }
 
 module "hdp-edge" {
-  source                = "../../modules/nodes"
+  source                = "../../modules/nodegroups"
   host_group            = "hdp-edge"
+  hostname              = "bds-e"
+  domainsuffix          = "scalhive.com"
   nodescount            = 1
   flavor                = "t2.medium"
   image                 = "CentOS-7.4"

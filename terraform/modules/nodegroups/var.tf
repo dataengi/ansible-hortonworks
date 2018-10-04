@@ -27,10 +27,10 @@ variable "flavor" {
   default = "t2.medium"
 }
 
-variable "name_suffix" {
-  default = "demo"
-}
-
 variable "host_group" {
   description = "group of hosts master|slave|node"
 }
+
+variable "hostname" {}
+
+variable "domainsuffix" {}

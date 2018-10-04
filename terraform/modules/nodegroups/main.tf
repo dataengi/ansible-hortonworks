@@ -33,7 +33,7 @@ resource "openstack_compute_instance_v2" "node" {
 
   
   count = "${var.nodescount}"
-  name = "${format("${var.host_group}-%02d", count.index+1)}"
+  name = "${format("${var.hostname}-%02d.${var.domainsuffix}", count.index+1)}"
   image_name = "${data.openstack_images_image_v2.osimage.name}"
   key_pair = "${var.keyname}" # openstack key_pair
   flavor_name = "${var.flavor}"
@@ -71,6 +71,6 @@ resource "null_resource" "va" {
 
   provisioner "local-exec" {
     when = "destroy"
-    command = "sleep 20;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml"
+    command = "sleep 10;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
   }
 }
