@@ -44,13 +44,4 @@
       recurse: yes
       path: "{{ directoryPath }}"
 
-  - name: "Install ntpd"
-    action: yum name=ntp state=present
-    notify: restart-ntpd
-
-  handlers:
-
-    - name: restart-ntpd
-      service: name=ntpd state=restarted enable=yes
-
 
