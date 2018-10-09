@@ -21,3 +21,16 @@ variable "openstack_keypair" {
 variable "network_name" {
   description = "The network to be used."
 }
+
+
+variable "access_key" {
+  description = "Access key"
+}
+
+variable "secret_key" {
+  description = "Secret key"
+}
+
+variable "aws_region" {}
+
+variable "aws_zone_id" {}

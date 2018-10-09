@@ -34,3 +34,5 @@ variable "host_group" {
 variable "hostname" {}
 
 variable "domainsuffix" {}
+
+variable "aws_zone_id" {}

@@ -31,7 +31,6 @@ locals {
 resource "openstack_compute_instance_v2" "node" {
   //stop_before_destroy = true
 
-  
   count = "${var.nodescount}"
   name = "${format("${var.hostname}-%02d.${var.domainsuffix}", count.index+1)}"
   image_name = "${data.openstack_images_image_v2.osimage.name}"
@@ -47,6 +46,7 @@ resource "openstack_compute_instance_v2" "node" {
     destination_type = "local"
     boot_index = 0
     delete_on_termination = true
+    volume_size = 100
   }
   network = {
     name = "${var.network_name}"
@@ -73,4 +73,14 @@ resource "null_resource" "va" {
     when = "destroy"
     command = "sleep 10;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
   }
+}
+
+resource "aws_route53_record" "nodegroups-dns-records" {
+  count = "${var.nodescount}"
+
+  zone_id = "${var.aws_zone_id}"
+  name = "${element(openstack_compute_instance_v2.node.*.name, count.index)}"
+  type = "A"
+  ttl = "300"
+  records = ["${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)}"]
 }

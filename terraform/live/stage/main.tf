@@ -11,7 +11,12 @@ provider "openstack" {
 provider "null" {
   version = "~> 1.0"
 }
-
+provider "aws" {
+  region      = "${var.aws_region}"
+  access_key  = "${var.access_key}"
+  secret_key  = "${var.secret_key}"
+  version     = "~> 1.39"
+}
 
 
 module "hdp-master" {
@@ -19,15 +24,16 @@ module "hdp-master" {
   host_group            = "hdp-master"
   hostname              = "bds-m"
   domainsuffix          = "scalhive.com"
-  nodescount            = 1
-  flavor                = "t2.medium" #TODO: change
+  nodescount            = 2
+  flavor                = "c4.4xlarge" #TODO: change
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
   private_key           = "~/.ssh/big-data-sandbox.pem" #TODO: get from OpenStack
   enable_persist_volume = true
-  persist_volume_size   = 2
+  aws_zone_id           = "${var.aws_zone_id}"
+  persist_volume_size   = 300
 }
 
 module "hdp-slave" {
@@ -35,15 +41,16 @@ module "hdp-slave" {
   host_group            = "hdp-slave"
   hostname              = "bds-s"
   domainsuffix          = "scalhive.com"
-  nodescount            = 1
-  flavor                = "t2.medium"
+  nodescount            = 3
+  flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
-  persist_volume_size   = 2
+  aws_zone_id           = "${var.aws_zone_id}"
+  persist_volume_size   = 200
 }
 
 module "hdp-edge" {
@@ -52,14 +59,15 @@ module "hdp-edge" {
   hostname              = "bds-e"
   domainsuffix          = "scalhive.com"
   nodescount            = 1
-  flavor                = "t2.medium"
+  flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = false
-  persist_volume_size   = 2
+  aws_zone_id           = "${var.aws_zone_id}"
+  persist_volume_size   = 200
 }
 
 

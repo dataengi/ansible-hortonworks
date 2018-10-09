@@ -9,12 +9,13 @@
   # fs variables
   vars:
     device: '/dev/vdb'
-    fstype: 'ext4'
-    directoryPath:    '/hdfs'
+    fstype: 'xfs'
+    directoryPath:    '/hadoop'
     directoryOwner: 'centos'
     directoryGroup: 'centos'
     directoryMode: '0755'
     mountOptions: 'defaults'
+    hostName:
 
   tasks:
   - name: Create a ext4 filesystem on /dev/vdb1 and check disk blocks
@@ -27,7 +28,7 @@
       path: "{{ directoryPath }}"
       state: directory
 
-  - name: mount directory /hdfs
+  - name: mount directory /hadoop
     # This will also add to /etc/fstab
     mount:
       path: "{{ directoryPath }}"
