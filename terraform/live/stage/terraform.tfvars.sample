@@ -1,0 +1,11 @@
+username            = "openstsack_username"
+tenantname          = "tenantname"
+password            = "passs"
+openstack_auth_url  = "http://openstack_auth_url:5000/v3/"
+openstack_keypair   = "key-pair"
+network_name        = "network_name"
+#AWS
+aws_region          = "eu-west-2"
+access_key          = "123131321"
+secret_key          = "******"
+aws_zone_id         = "xxxxxxxx"
