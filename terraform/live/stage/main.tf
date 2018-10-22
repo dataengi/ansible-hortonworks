@@ -24,7 +24,7 @@ module "hdp-master" {
   host_group            = "hdp-master"
   hostname              = "bds-m"
   domainsuffix          = "scalhive.com"
-  nodescount            = 2
+  nodescount            = 1
   flavor                = "c4.4xlarge" #TODO: change
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
@@ -33,7 +33,9 @@ module "hdp-master" {
   private_key           = "~/.ssh/big-data-sandbox.pem" #TODO: get from OpenStack
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
-  persist_volume_size   = 300
+  persist_volume_size   = 30
+  sec_groups            = ["default","gce","local-network"]
+  enable_floating_ip    = true
 }
 
 module "hdp-slave" {
@@ -41,7 +43,7 @@ module "hdp-slave" {
   host_group            = "hdp-slave"
   hostname              = "bds-s"
   domainsuffix          = "scalhive.com"
-  nodescount            = 3
+  nodescount            = 1
   flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
@@ -50,7 +52,8 @@ module "hdp-slave" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
-  persist_volume_size   = 200
+  persist_volume_size   = 20
+  sec_groups            = ["default","local-network"]
 }
 
 module "hdp-edge" {
@@ -67,7 +70,8 @@ module "hdp-edge" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = false
   aws_zone_id           = "${var.aws_zone_id}"
-  persist_volume_size   = 200
+  persist_volume_size   = 20
+  sec_groups            = ["default","local-network"]
 }
 
 

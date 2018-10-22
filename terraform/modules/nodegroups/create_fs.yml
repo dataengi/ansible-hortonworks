@@ -45,4 +45,15 @@
       recurse: yes
       path: "{{ directoryPath }}"
 
+  - name: Install NTP
+    yum:
+      name: ntp
+      state: present
+
+  - name: Restart NTP
+    systemd:
+      name: ntpd
+      state: restarted
+      enabled: yes
+
 

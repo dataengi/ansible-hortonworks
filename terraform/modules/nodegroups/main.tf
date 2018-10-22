@@ -1,6 +1,6 @@
 resource "openstack_blockstorage_volume_v2" "persisit_volume" {
   count = "${var.enable_persist_volume ? var.nodescount : 0}"
-  name = "${format("${var.host_group}-hdfs-%02d", count.index+1)}"
+  name = "${format("${var.hostname}-hdfs-%02d", count.index+1)}"
   size = "${var.persist_volume_size}"
   description = "${format("volume for HDFS on node ${var.host_group}-hdfs-%02d", count.index+1)}"
   provider = "openstack"
@@ -27,6 +27,17 @@ locals {
   created_nodes = "%s ansible_host=%s ansible_user=${var.admin_username} ansible_ssh_private_key_file=\"${var.private_key}\"\n"
 }
 
+resource "openstack_compute_floatingip_v2" "float_ip" {
+  count = "${var.enable_floating_ip ? var.nodescount : 0}"
+  pool  = "external_network"
+}
+
+resource "openstack_compute_floatingip_associate_v2" "floatingip" {
+  count = "${var.enable_floating_ip ? var.nodescount : 0}"
+  floating_ip = "${element(openstack_compute_floatingip_v2.float_ip.*.address, count.index)}"
+  instance_id = "${element(openstack_compute_instance_v2.node.*.id, count.index)}"
+}
+
 
 resource "openstack_compute_instance_v2" "node" {
   //stop_before_destroy = true
@@ -36,9 +47,7 @@ resource "openstack_compute_instance_v2" "node" {
   image_name = "${data.openstack_images_image_v2.osimage.name}"
   key_pair = "${var.keyname}" # openstack key_pair
   flavor_name = "${var.flavor}"
-  security_groups = [
-    "default",
-    "local-network"]
+  security_groups = "${var.sec_groups}"
 
   block_device {
     uuid = "${data.openstack_images_image_v2.osimage.id}"

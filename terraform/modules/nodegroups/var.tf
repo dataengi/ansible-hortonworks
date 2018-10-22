@@ -36,3 +36,12 @@ variable "hostname" {}
 variable "domainsuffix" {}
 
 variable "aws_zone_id" {}
+
+variable "sec_groups" {
+  type = "list"
+}
+
+variable "enable_floating_ip" {
+  default = 0
+  description = "enable floating IPs for host group"
+}
