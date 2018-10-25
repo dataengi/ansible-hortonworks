@@ -1,7 +1,11 @@
 [hdp-edge]
-bds-e-01.scalhive.com ansible_host=10.224.0.17 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-os-e-01.scalhive.com ansible_host=10.224.0.29 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-e-01 ansible_host=10.232.20.2 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-master]
-bds-m-01.scalhive.com ansible_host=10.224.0.45 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-m-01 ansible_host=10.232.20.6 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-slave]
-bds-s-01.scalhive.com ansible_host=10.224.0.15 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-os-s-01.scalhive.com ansible_host=10.224.0.46 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-os-s-02.scalhive.com ansible_host=10.224.0.38 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-s-01 ansible_host=10.232.20.5 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-s-02 ansible_host=10.232.20.4 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 

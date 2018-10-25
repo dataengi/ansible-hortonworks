@@ -8,7 +8,7 @@
 
   # fs variables
   vars:
-    directoryPath:    '/hdfs'
+    directoryPath:    '/hadoop'
 
   tasks:
   - name: unmount directory /hdfs

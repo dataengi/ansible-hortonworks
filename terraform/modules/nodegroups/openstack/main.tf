@@ -80,7 +80,7 @@ resource "null_resource" "va" {
 
   provisioner "local-exec" {
     when = "destroy"
-    command = "sleep 10;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
+    command = "sleep 10;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key '${var.private_key}' -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
   }
 }
 
