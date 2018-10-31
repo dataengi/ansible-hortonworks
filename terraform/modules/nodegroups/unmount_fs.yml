@@ -8,10 +8,10 @@
 
   # fs variables
   vars:
-    directoryPath:    '/hdfs'
+    directoryPath:    '/hadoop'
 
   tasks:
-  - name: unmount directory /hdfs
+  - name: unmount directory /hadoop
     # This will also add to /etc/fstab
     mount:
       path: "{{ directoryPath }}"

@@ -52,10 +52,10 @@ resource "openstack_compute_instance_v2" "node" {
   block_device {
     uuid = "${data.openstack_images_image_v2.osimage.id}"
     source_type = "image"
-    destination_type = "local"
+    destination_type = "volume"
     boot_index = 0
     delete_on_termination = true
-    volume_size = 100
+    volume_size = "${var.system_volume_size}"
   }
   network = {
     name = "${var.network_name}"

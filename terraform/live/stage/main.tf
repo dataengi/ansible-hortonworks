@@ -22,28 +22,29 @@ provider "aws" {
 module "hdp-master" {
   source                = "../../modules/nodegroups"
   host_group            = "hdp-master"
-  hostname              = "bds-m"
+  hostname              = "cluster-os-m"
   domainsuffix          = "scalhive.com"
   nodescount            = 1
-  flavor                = "c4.4xlarge" #TODO: change
+  flavor                = "c4.4xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
-  private_key           = "~/.ssh/big-data-sandbox.pem" #TODO: get from OpenStack
+  private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  system_volume_size    = 100
   persist_volume_size   = 30
-  sec_groups            = ["default","gce","local-network"]
-  enable_floating_ip    = true
+  sec_groups            = ["default","local-network"]
+  enable_floating_ip    = false
 }
 
 module "hdp-slave" {
   source                = "../../modules/nodegroups"
   host_group            = "hdp-slave"
-  hostname              = "bds-s"
+  hostname              = "cluster-os-s"
   domainsuffix          = "scalhive.com"
-  nodescount            = 1
+  nodescount            = 2
   flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
@@ -52,6 +53,7 @@ module "hdp-slave" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  system_volume_size    = 100
   persist_volume_size   = 20
   sec_groups            = ["default","local-network"]
 }
@@ -61,7 +63,7 @@ module "hdp-edge" {
   host_group            = "hdp-edge"
   hostname              = "bds-e"
   domainsuffix          = "scalhive.com"
-  nodescount            = 1
+  nodescount            = 0
   flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
@@ -70,6 +72,7 @@ module "hdp-edge" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = false
   aws_zone_id           = "${var.aws_zone_id}"
+  system_volume_size    = 100
   persist_volume_size   = 20
   sec_groups            = ["default","local-network"]
 }
