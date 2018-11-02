@@ -33,6 +33,7 @@ module "hdp-master" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  aws_reverse_zone_id   = "${var.aws_os_reverse_zone_id}"
   system_volume_size    = 100
   persist_volume_size   = 30
   sec_groups            = ["default","local-network"]
@@ -54,6 +55,7 @@ module "hdp-master2" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  aws_reverse_zone_id   = "${var.aws_os_reverse_zone_id}"
   system_volume_size    = 100
   persist_volume_size   = 30
   sec_groups            = ["default","local-network"]
@@ -74,6 +76,7 @@ module "hdp-slave" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  aws_reverse_zone_id   = "${var.aws_os_reverse_zone_id}"
   system_volume_size    = 100
   persist_volume_size   = 20
   sec_groups            = ["default","local-network"]
@@ -93,6 +96,7 @@ module "hdp-edge" {
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
+  aws_reverse_zone_id   = "${var.aws_os_reverse_zone_id}"
   system_volume_size    = 100
   persist_volume_size   = 20
   sec_groups            = ["default","local-network"]

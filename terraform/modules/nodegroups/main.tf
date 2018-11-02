@@ -104,3 +104,19 @@ resource "aws_route53_record" "nodegroups-dns-records" {
   ttl = "300"
   records = ["${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)}"]
 }
+
+resource "aws_route53_record" "nodegroups-reverse-dns-records" {
+  count = "${var.nodescount}"
+
+  zone_id = "${var.aws_reverse_zone_id}"
+//  name = "${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)}" //    IP.0.224.10.in-addr.arpa
+  name = "${format("%s.%s.%s.%s.in-addr.arpa",
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 3),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 2),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 1),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 0))
+                    }"
+  type = "PTR"
+  ttl = "30"
+  records = ["${element(openstack_compute_instance_v2.node.*.name, count.index)}"]  // NAME
+}
