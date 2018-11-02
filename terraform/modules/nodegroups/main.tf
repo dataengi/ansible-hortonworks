@@ -1,3 +1,4 @@
+/**
 resource "openstack_blockstorage_volume_v2" "persisit_volume" {
   count = "${var.enable_persist_volume ? var.nodescount : 0}"
   name = "${format("${var.hostname}-hdfs-%02d", count.index+1)}"
@@ -15,7 +16,7 @@ resource "openstack_compute_volume_attach_v2" "va" {
   volume_id = "${element(openstack_blockstorage_volume_v2.persisit_volume.*.id, count.index)}"
   instance_id = "${element(openstack_compute_instance_v2.node.*.id, count.index)}"
 }
-
+*/
 data "openstack_images_image_v2" "osimage" {
   name = "${var.image}"
   most_recent = true
@@ -57,13 +58,23 @@ resource "openstack_compute_instance_v2" "node" {
     delete_on_termination = true
     volume_size = "${var.system_volume_size}"
   }
+
+  block_device {
+    source_type = "blank"
+    destination_type = "volume"
+    volume_size = "${var.enable_persist_volume ? var.persist_volume_size : 0}"
+    delete_on_termination = true
+    boot_index = -1
+  }
+
   network = {
     name = "${var.network_name}"
   }
 }
 
 resource "null_resource" "va" {
-  depends_on = ["openstack_blockstorage_volume_v2.persisit_volume","openstack_compute_instance_v2.node","openstack_compute_volume_attach_v2.va"]
+  //depends_on = ["openstack_blockstorage_volume_v2.persisit_volume","openstack_compute_instance_v2.node","openstack_compute_volume_attach_v2.va"]
+  depends_on = ["openstack_compute_instance_v2.node"]
   count = "${var.enable_persist_volume ? var.nodescount : 0}"
 
   # custom username to connect
@@ -75,7 +86,7 @@ resource "null_resource" "va" {
 
  provisioner "local-exec" {
     when = "create"
-    command = "sleep 20;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key '${var.private_key}' -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/create_fs.yml"
+    command = "sleep 30;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key '${var.private_key}' -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/create_fs.yml"
   }
 
   provisioner "local-exec" {
