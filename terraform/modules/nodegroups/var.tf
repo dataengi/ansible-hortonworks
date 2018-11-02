@@ -42,6 +42,8 @@ variable "domainsuffix" {}
 
 variable "aws_zone_id" {}
 
+variable "aws_reverse_zone_id" {}
+
 variable "sec_groups" {
   type = "list"
 }

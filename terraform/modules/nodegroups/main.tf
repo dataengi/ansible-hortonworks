@@ -1,22 +1,3 @@
-/**
-resource "openstack_blockstorage_volume_v2" "persisit_volume" {
-  count = "${var.enable_persist_volume ? var.nodescount : 0}"
-  name = "${format("${var.hostname}-hdfs-%02d", count.index+1)}"
-  size = "${var.persist_volume_size}"
-  description = "${format("volume for HDFS on node ${var.host_group}-hdfs-%02d", count.index+1)}"
-  provider = "openstack"
-
-  lifecycle {
-    prevent_destroy = false
-  }
-}
-
-resource "openstack_compute_volume_attach_v2" "va" {
-  count = "${var.enable_persist_volume ? var.nodescount : 0}"
-  volume_id = "${element(openstack_blockstorage_volume_v2.persisit_volume.*.id, count.index)}"
-  instance_id = "${element(openstack_compute_instance_v2.node.*.id, count.index)}"
-}
-*/
 data "openstack_images_image_v2" "osimage" {
   name = "${var.image}"
   most_recent = true
@@ -73,7 +54,6 @@ resource "openstack_compute_instance_v2" "node" {
 }
 
 resource "null_resource" "va" {
-  //depends_on = ["openstack_blockstorage_volume_v2.persisit_volume","openstack_compute_instance_v2.node","openstack_compute_volume_attach_v2.va"]
   depends_on = ["openstack_compute_instance_v2.node"]
   count = "${var.enable_persist_volume ? var.nodescount : 0}"
 
@@ -91,7 +71,7 @@ resource "null_resource" "va" {
 
   provisioner "local-exec" {
     when = "destroy"
-    command = "sleep 10;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
+    command = "sleep 30;  ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key ~/datalake/big-data-sandbox.pem -i '${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)},' ${path.module}/unmount_fs.yml; sleep 20"
   }
 }
 
@@ -103,4 +83,19 @@ resource "aws_route53_record" "nodegroups-dns-records" {
   type = "A"
   ttl = "300"
   records = ["${element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index)}"]
+}
+
+resource "aws_route53_record" "nodegroups-reverse-dns-records" {
+  count = "${var.nodescount}"
+
+  zone_id = "${var.aws_reverse_zone_id}"
+  name = "${format("%s.%s.%s.%s.in-addr.arpa",
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 3),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 2),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 1),
+                    element(split(".", format("%s", element(openstack_compute_instance_v2.node.*.access_ip_v4, count.index))), 0))
+                    }"
+  type = "PTR"
+  ttl = "30"
+  records = ["${element(openstack_compute_instance_v2.node.*.name, count.index)}"]
 }

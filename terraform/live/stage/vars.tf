@@ -34,3 +34,5 @@ variable "secret_key" {
 variable "aws_region" {}
 
 variable "aws_zone_id" {}
+
+variable "aws_os_reverse_zone_id" {}
