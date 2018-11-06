@@ -67,7 +67,7 @@ module "hdp-slave" {
   host_group            = "hdp-worker"
   hostname              = "cluster-os-s"
   domainsuffix          = "scalhive.com"
-  nodescount            = 3
+  nodescount            = 1
   flavor                = "c4.2xlarge"
   image                 = "CentOS-7.4"
   network_name          = "${var.network_name}"
