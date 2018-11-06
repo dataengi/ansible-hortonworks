@@ -23,7 +23,7 @@ repo_base_url: 'http://public-repo-1.hortonworks.com'     # change this if using
 ## general configuration ##
 ###########################
 
-external_dns: no                                         # set to yes to use the existing DNS (when no, it will update the /etc/hosts file - must be set to 'no' when using Azure)
+external_dns: no                                           # set to yes to use the existing DNS (when no, it will update the /etc/hosts file - must be set to 'no' when using Azure)
 disable_firewall: yes                                      # set to yes to disable the existing local firewall service (iptables, firewalld, ufw)
 
 
@@ -168,82 +168,38 @@ cluster_template_file: 'cluster_template.j2'              # the cluster creation
 blueprint_name: '{{ cluster_name }}_blueprint'                  # the name of the blueprint as it will be stored in Ambari
 blueprint_file: 'blueprint_dynamic.j2'                          # the blueprint JSON file - 'blueprint_dynamic.j2' is a Jinja2 template that generates the required JSON
 blueprint_dynamic:                                              # properties for the dynamic blueprint - these are only used by the 'blueprint_dynamic.j2' template to generate the JSON
-  - host_group: "hdp-masternode-01"
-    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT', 'HBASE_CLIENT', 'ATLAS_CLIENT']
+  - host_group: "hdp-master"
+    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT']
     services:
       - ZOOKEEPER_SERVER
       - NAMENODE
-      - ZKFC
-      - JOURNALNODE
-      - RESOURCEMANAGER
-      - HBASE_MASTER
-      - HIVE_SERVER
-      - HIVE_METASTORE
-      - DRUID_BROKER
-      - OOZIE_SERVER
-      - HISTORYSERVER
-      - SPARK2_JOBHISTORYSERVER
-      - KAFKA_BROKER
-      - ACTIVITY_ANALYZER
-      - HST_AGENT
-      - METRICS_MONITOR
-      - LOGSEARCH_LOGFEEDER
-  - host_group: "hdp-masternode-02"
-    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT', 'HBASE_CLIENT', 'ATLAS_CLIENT']
-    services:
-      - ZOOKEEPER_SERVER
-      - NAMENODE
-      - ZKFC
-      - JOURNALNODE
+      - SECONDARY_NAMENODE
       - RESOURCEMANAGER
       - APP_TIMELINE_SERVER
       - YARN_REGISTRY_DNS
       - TIMELINE_READER
-      - HBASE_MASTER
+      - HISTORYSERVER
+      - SPARK2_JOBHISTORYSERVER
       - HIVE_SERVER
       - HIVE_METASTORE
-      - DRUID_BROKER
-      - KAFKA_BROKER
-      - ACTIVITY_ANALYZER
-      - HST_AGENT
-      - METRICS_MONITOR
-      - LOGSEARCH_LOGFEEDER
-  - host_group: "hdp-management"
-    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT', 'HBASE_CLIENT', 'ATLAS_CLIENT']
-    services:
-      - ZOOKEEPER_SERVER
-      - JOURNALNODE
-      - DRUID_COORDINATOR
-      - DRUID_OVERLORD
-      - DRUID_ROUTER
-      - SUPERSET
-      - ATLAS_SERVER
+      - OOZIE_SERVER
       - KNOX_GATEWAY
-      - ZEPPELIN_MASTER
       - AMBARI_SERVER
       - INFRA_SOLR
-      - LOGSEARCH_SERVER
+      - METRICS_COLLECTOR
+      - METRICS_GRAFANA
+      - METRICS_MONITOR
       - HST_SERVER
       - ACTIVITY_ANALYZER
       - ACTIVITY_EXPLORER
       - HST_AGENT
-      - METRICS_COLLECTOR
-      - METRICS_GRAFANA
-      - METRICS_MONITOR
-      - LOGSEARCH_LOGFEEDER
-  - host_group: "hdp-worker"
-    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT', 'HBASE_CLIENT', 'ATLAS_CLIENT']
+  - host_group: "hdp-slave"
+    clients: ['ZOOKEEPER_CLIENT', 'HDFS_CLIENT', 'YARN_CLIENT', 'MAPREDUCE2_CLIENT', 'TEZ_CLIENT', 'PIG', 'SQOOP', 'HIVE_CLIENT', 'OOZIE_CLIENT', 'INFRA_SOLR_CLIENT', 'SPARK2_CLIENT']
     services:
       - DATANODE
       - NODEMANAGER
-      - HBASE_REGIONSERVER
-      - DRUID_HISTORICAL
-      - DRUID_MIDDLEMANAGER
-      - HST_AGENT
       - METRICS_MONITOR
-      - LOGSEARCH_LOGFEEDER
-
-
+      - HST_AGENT
 
 
 
