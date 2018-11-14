@@ -1,0 +1,59 @@
+---
+- name: create and mount filesystem
+  hosts: all
+  remote_user: centos
+  become: true
+  become_method: sudo
+  become_user: root
+
+  # fs variables
+  vars:
+    device: '/dev/sdb'
+    fstype: 'xfs'
+    directoryPath:    '/hadoop'
+    directoryOwner: 'centos'
+    directoryGroup: 'centos'
+    directoryMode: '0755'
+    mountOptions: 'defaults'
+    hostName:
+
+  tasks:
+  - name: Create a ext4 filesystem on /dev/vdb1 and check disk blocks
+    filesystem:
+      fstype: "{{ fstype }}"
+      dev: "{{ device }}"
+
+  - name: create directory if they don't exist
+    file:
+      path: "{{ directoryPath }}"
+      state: directory
+
+  - name: mount directory /hadoop
+    # This will also add to /etc/fstab
+    mount:
+      path: "{{ directoryPath }}"
+      src: "{{ device }}"
+      fstype: "{{ fstype }}"
+      opts: "{{ mountOptions }}"
+      state: mounted
+
+  - name:  Change permission on newly created directory and mounted fs
+    file:
+      owner: "{{ directoryOwner }}"
+      group: "{{ directoryGroup }}"
+      mode: "{{ directoryMode }}"
+      recurse: yes
+      path: "{{ directoryPath }}"
+
+  - name: Install NTP
+    yum:
+      name: ntp
+      state: present
+
+  - name: Restart NTP
+    systemd:
+      name: ntpd
+      state: restarted
+      enabled: yes
+
+

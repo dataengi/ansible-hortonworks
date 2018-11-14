@@ -1,6 +1,19 @@
+######################################################
+##
+## The static inventory puts the hosts in different groups as described here: https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#hosts-and-groups
+## Variables would be defined directly for each host, including the ansible_user, the login user with sudoers permissions.
+## For authentication, either the password or the SSH Private Key can be used.
+##
+######################################################
+
+[hdp-edge]
+cluster-os-e-01.scalhive.com ansible_host=10.224.0.29 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-e-01 ansible_host=10.232.20.2 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-master]
-cluster-os-m-01.scalhive.com ansible_host=10.224.0.17 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-m-01 ansible_host=10.232.20.6 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 [hdp-slave]
-cluster-os-s-01.scalhive.com ansible_host=10.224.0.4 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
-cluster-os-s-02.scalhive.com ansible_host=10.224.0.29 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-os-s-01.scalhive.com ansible_host=10.224.0.46 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-os-s-02.scalhive.com ansible_host=10.224.0.38 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-s-01 ansible_host=10.232.20.5 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
+cluster-gcp-s-02 ansible_host=10.232.20.4 ansible_user=centos ansible_ssh_private_key_file=~/.ssh/big-data-sandbox.pem
 

@@ -2,6 +2,13 @@ variable "username" {
   description = "Openstack username"
 }
 
+variable "gcp_projectname" {}
+
+variable "gcp_credentials_json" {
+  type = "string"
+
+}
+
 variable "tenantname" {
   description = "The name of the Tenant (in terms of OStack tenant is project-name)"
 }
@@ -23,6 +30,10 @@ variable "network_name" {
 }
 
 
+variable "gcp_network_name" {
+  description = "The network to be used in GCP."
+}
+
 variable "access_key" {
   description = "Access key"
 }
@@ -35,4 +46,11 @@ variable "aws_region" {}
 
 variable "aws_zone_id" {}
 
-variable "aws_os_reverse_zone_id" {}
+# dedicated DB
+variable db_password {
+  type = "string"
+}
+
+variable db_name {
+  type = "string"
+}
