@@ -11,7 +11,7 @@
     directoryPath:    '/hadoop'
 
   tasks:
-  - name: unmount directory /hadoop
+  - name: unmount directory /hdfs
     # This will also add to /etc/fstab
     mount:
       path: "{{ directoryPath }}"

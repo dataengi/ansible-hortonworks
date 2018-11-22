@@ -2,9 +2,8 @@ variable "nodescount" {
   description = "number of nodes"
 }
 
-variable "system_volume_size" {
-  description = "size of system volumes"
-  default = 20
+variable "gcp_projectname" {
+  description = "Name of GCP project"
 }
 
 variable "enable_persist_volume" {
@@ -18,18 +17,18 @@ variable "persist_volume_size" {
 
 variable "network_name" {}
 
-variable "keyname" {} # openstack_keypair
-
 variable "private_key" {}
 
+variable "public_key" {}
+
 variable "image" {
-  default = "CentOS-7.4"
+  default = "centos-7-v20181011"
 }
 
 variable "admin_username" {}
 
-variable "flavor" {
-  default = "t2.medium"
+variable "machine_type" {
+  default = "n1-standard-4"
 }
 
 variable "host_group" {
@@ -42,13 +41,7 @@ variable "domainsuffix" {}
 
 variable "aws_zone_id" {}
 
-variable "aws_reverse_zone_id" {}
-
-variable "sec_groups" {
-  type = "list"
-}
-
-variable "enable_floating_ip" {
-  default = 0
-  description = "enable floating IPs for host group"
+variable zone {
+  type = "string"
+  default = "europe-west3-b"
 }

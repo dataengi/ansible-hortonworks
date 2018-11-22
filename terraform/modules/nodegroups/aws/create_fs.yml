@@ -8,7 +8,7 @@
 
   # fs variables
   vars:
-    device: '/dev/vdb'
+    device: '/dev/sdb'
     fstype: 'xfs'
     directoryPath:    '/hadoop'
     directoryOwner: 'centos'

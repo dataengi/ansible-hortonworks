@@ -27,6 +27,7 @@ provider "google" {
 }
 
 
+
 # OpenStack
 module "hdp-master" {
   source                = "../../modules/nodegroups/openstack"
@@ -39,11 +40,9 @@ module "hdp-master" {
   network_name          = "${var.network_name}"
   admin_username        = "centos"
   keyname               = "${var.openstack_keypair}"
-<<<<<<< HEAD
   private_key           = "~/.ssh/big-data-sandbox.pem"
   enable_persist_volume = true
   aws_zone_id           = "${var.aws_zone_id}"
-  aws_reverse_zone_id   = "${var.aws_os_reverse_zone_id}"
   system_volume_size    = 100
   persist_volume_size   = 30
   sec_groups            = ["default","local-network"]
