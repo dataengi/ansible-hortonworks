@@ -1,21 +1,3 @@
-resource "openstack_blockstorage_volume_v2" "persisit_volume" {
-  count = "${var.enable_persist_volume ? var.nodescount : 0}"
-  name = "${format("${var.hostname}-hdfs-%02d", count.index+1)}"
-  size = "${var.persist_volume_size}"
-  description = "${format("volume for HDFS on node ${var.host_group}-hdfs-%02d", count.index+1)}"
-  provider = "openstack"
-
-  lifecycle {
-    prevent_destroy = false
-  }
-}
-
-resource "openstack_compute_volume_attach_v2" "va" {
-  count = "${var.enable_persist_volume ? var.nodescount : 0}"
-  volume_id = "${element(openstack_blockstorage_volume_v2.persisit_volume.*.id, count.index)}"
-  instance_id = "${element(openstack_compute_instance_v2.node.*.id, count.index)}"
-}
-
 data "openstack_images_image_v2" "osimage" {
   name = "${var.image}"
   most_recent = true
@@ -52,18 +34,27 @@ resource "openstack_compute_instance_v2" "node" {
   block_device {
     uuid = "${data.openstack_images_image_v2.osimage.id}"
     source_type = "image"
-    destination_type = "local"
+    destination_type = "volume"
     boot_index = 0
     delete_on_termination = true
-    volume_size = 100
+    volume_size = "${var.system_volume_size}"
   }
+
+  block_device {
+    source_type = "blank"
+    destination_type = "volume"
+    volume_size = "${var.enable_persist_volume ? var.persist_volume_size : 0}"
+    delete_on_termination = true
+    boot_index = -1
+  }
+
   network = {
     name = "${var.network_name}"
   }
 }
 
 resource "null_resource" "va" {
-  depends_on = ["openstack_blockstorage_volume_v2.persisit_volume","openstack_compute_instance_v2.node","openstack_compute_volume_attach_v2.va"]
+  depends_on = ["openstack_compute_instance_v2.node"]
   count = "${var.enable_persist_volume ? var.nodescount : 0}"
 
   # custom username to connect

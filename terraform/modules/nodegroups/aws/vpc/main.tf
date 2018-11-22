@@ -1,6 +1,6 @@
 # Specify the provider and access details
 provider "aws" {
-  region = "${var.aws_region}"
+  region = "${var.aws_zone_id}"
 }
 
 # Create a VPC to launch our instances into
@@ -73,5 +73,5 @@ resource "aws_subnet" "private" {
 
 resource "aws_key_pair" "auth" {
   key_name   = "${lookup(var.private_key, var.aws_region)}"
-  public_key = "${file(lookup(var.public_key_path, var.aws_region))}"
+  public_key = "${file(lookup(var.public_key, var.aws_region))}" // TODO: check public_key
 }

@@ -2,6 +2,11 @@ variable "nodescount" {
   description = "number of nodes"
 }
 
+variable "system_volume_size" {
+  description = "size of system volumes"
+  default = 100
+}
+
 variable "enable_persist_volume" {
   default = false
 }
